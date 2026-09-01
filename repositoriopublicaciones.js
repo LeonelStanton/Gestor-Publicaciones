@@ -1,12 +1,17 @@
-export default class RepositorioPublicaciones {
+// RepositorioPublicaciones.js
+import { EventEmitter } from "node:events"; // Importamos el emisor nativo de Node [8]
+
+export default class RepositorioPublicaciones extends EventEmitter { // Aplicamos herencia [8]
     constructor() {
-        // Inicializamos la colección de publicaciones vacía [1, 2]
+        super(); // ¡Regla de oro! Llamamos al constructor de la clase base antes de usar "this" [8]
         this.publicaciones = [];
     }
 
-    // Agrega una publicación al array interno [1, 2]
     agregar(publicacion) {
         this.publicaciones.push(publicacion);
+        
+        // Emitimos el evento "publicacionAgregada" y le pasamos el objeto publicacion como dato [4, 9, 10]
+        this.emit("publicacionAgregada", publicacion);
     }
 
     // Busca todas las publicaciones que pertenezcan a un autor por su nombre [1, 2]

@@ -1,47 +1,86 @@
-
-/**
- * Valida si una publicación cumple con los requisitos del sistema.
- * @param {Publicacion} publicacion - El objeto publicación a validar.
- * @param {Object} reglas - El objeto con los parámetros de validación (de paso temporal).
- * @returns {boolean} true si es válida, false en caso contrario.
- */
-function validarPublicacion(publicacion, reglas) {
-    // Si el título es más corto que el mínimo requerido por las reglas, no es válida
-    if (publicacion.titulo.length < reglas.minTitulo) {
-        return false;
-    }
-    return true;
-}
-
-import Usuario from './usuario.js';
-import PublicacionVenta from './publicacionventa.js';
+// main.js
+import Usuario from './Usuario.js';
+import PublicacionVenta from './PublicacionVenta.js';
+import PublicacionServicio from './PublicacionServicio.js';
 import RepositorioPublicaciones from './repositoriopublicaciones.js';
 
+// 1. Inicializamos el repositorio
 const repo = new RepositorioPublicaciones();
-const usuario = new Usuario("Lucía", "lucia@mail.com");
 
-// 1. Definimos las reglas que actuarán como dependencia [2, 4]
-const reglasNegocio = { minTitulo: 5 };
+// ====================================================================
+// PARTE 2: REGISTRAR DOS LISTENERS DISTINTOS (Antes de agregar datos) [8]
+// ====================================================================
 
-// 2. Creamos dos publicaciones para probar los límites de la regla
-const pValida = new PublicacionVenta("Vendo apuntes de Álgebra", "Completos", usuario, 3500);
-const pInvalida = new PublicacionVenta("TP1", "Compañero para redes", usuario, 0); // Título muy corto (3 letras)
+// Listener 1: Muestra por consola el resumen polimórfico de la publicación [13]
+repo.on("publicacionAgregada", (p) => {
+    console.log(`[Listener 1 - Log] ¡Nueva publicación detectada!: "${p.mostrarResumen()}"`);
+});
 
-// 3. Evaluamos de forma segura antes de guardar [2, 4]
-console.log("=== PRUEBA DE VALIDACIÓN ===");
+// Listener 2: Lleva una cuenta acumulada del total en tiempo real [13, 14]
+let totalPublicaciones = 0;
+repo.on("publicacionAgregada", (p) => {
+    totalPublicaciones++;
+    console.log(`[Listener 2 - Contador] Total acumulado en el sistema: ${totalPublicaciones} publicaciones.\n`);
+});
 
-if (validarPublicacion(pValida, reglasNegocio)) {
-    repo.agregar(pValida);
-    console.log(`[OK] Agregada: "${pValida.titulo}"`);
-} else {
-    console.log(`[RECHAZADO] Título demasiado corto para: "${pValida.titulo}"`);
+// 2. Instanciamos datos base para la prueba sincrónica
+const u1 = new Usuario("Lucía", "lucia@mail.com");
+const v1 = new PublicacionVenta("Vendo apuntes de Álgebra", "Completos", u1, 3500);
+const s1 = new PublicacionServicio("Clases de Redes", "Preparación final", u1, "virtual", 90);
+
+console.log("=== 1. PRUEBA DE EVENTOS SINCÓNICOS ===");
+repo.agregar(v1); // Disparará ambos listeners automáticamente [13]
+repo.agregar(s1);
+
+
+// ====================================================================
+// PARTE 3: SIMULAR OPERACIÓN ASÍNCRONA CON CALLBACKS [11]
+// ====================================================================
+function publicarConDemora(publicacion, callback) {
+    console.log(`[Callback] Iniciando subida diferida de: "${publicacion.titulo}"...`);
+    setTimeout(() => {
+        repo.agregar(publicacion); // Se agrega y se disparan los eventos [11]
+        callback();
+    }, 2000); // Demora simulada de 2 segundos [11]
 }
 
-if (validarPublicacion(pInvalida, reglasNegocio)) {
-    repo.agregar(pInvalida);
-    console.log(`[OK] Agregada: "${pInvalida.titulo}"`);
-} else {
-    console.log(`[RECHAZADO] Título demasiado corto para: "${pInvalida.titulo}"`);
+console.log("=== 2. PRUEBA ASÍNCRONA: CALLBACK (setTimeout) ===");
+const v2 = new PublicacionVenta("Vendo calculadora FX-95", "Excelente estado", u1, 12000);
+
+publicarConDemora(v2, () => {
+    console.log("[Callback] ¡La publicación diferida con callback ha terminado exitosamente!");
+});
+
+// Este log demuestra que el flujo principal no se queda esperando al setTimeout [12]
+console.log("[Código principal] El hilo sigue de largo, no se bloquea esperando la demora...\n");
+
+
+// ====================================================================
+// PARTE 3.5: LA MISMA DEMORA CON PROMISE Y ASYNC/AWAIT [12]
+// ====================================================================
+
+// Función auxiliar para envolver el setTimeout en una Promise [5, 12]
+function esperar(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-console.log(`\nCantidad total en el repositorio: ${repo.cantidadTotal()}`); // Debería ser 1
+// Versión moderna asíncrona [12]
+async function publicarConDemoraAsync(publicacion) {
+    console.log(`[Async/Await] Iniciando subida diferida de: "${publicacion.titulo}"...`);
+    await esperar(2000); // Pausa esta función por 2 segundos sin bloquear el resto del programa [6, 9]
+    repo.agregar(publicacion);
+}
+
+// Función envolvente asíncrona para orquestar el orden en consola
+async function ejecutarFlujoAsync() {
+    // Esperamos 3 segundos para que terminen de imprimirse las cosas de la prueba anterior
+    await esperar(3000); 
+    
+    console.log("=== 3. PRUEBA ASÍNCRONA: PROMISE + ASYNC / AWAIT ===");
+    const s2 = new PublicacionServicio("Tutoría de JS", "Prácticas de POO de cero", u1, "virtual", 120);
+    
+    await publicarConDemoraAsync(s2); // Esperamos a que la función asíncrona resuelva [12]
+    console.log("[Async/Await] ¡La publicación diferida con Async/Await ha finalizado exitosamente!"); // [9]
+}
+
+ejecutarFlujoAsync();
