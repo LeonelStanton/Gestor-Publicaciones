@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestor de Publicaciones Estudiantiles</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 0 15px; }
+        form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        input, textarea, select, button { padding: 8px; font-size: 14px; }
+        .tarjeta { border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+        .tarjeta.inactiva { opacity: 0.5; text-decoration: line-through; }
+        small { color: gray; }
+    </style>
+</head>
+<body>
+    <h1>Gestor de Publicaciones</h1>
+
+    <form id="form-publicacion">
+        <input id="titulo" placeholder="Título" required>
+        <textarea id="descripcion" placeholder="Descripción"></textarea>
+        <input id="autor" placeholder="Nombre del autor" required>
+        
+        <div>
+            <input id="email" type="email" placeholder="Email" required>
+            <small id="ayuda-email"></small>
+        </div>
+
+        <select id="tipo">
+            <option value="venta">Venta</option>
+            <option value="servicio">Servicio</option>
+        </select>
+
+        <!-- Aquí se inyectarán dinámicamente los campos extra (precio/modalidad) -->
+        <div id="campos-especificos"></div>
+
+        <button type="submit">Publicar</button>
+    </form>
+
+    <h3>Vista Previa:</h3>
+    <output id="vista-previa"></output>
+
+    <h3>Publicaciones Activas:</h3>
+    <section id="lista-publicaciones"></section>
+
+    <!-- Enlazamos main.js como módulo para poder usar import/export en el navegador -->
+    <script type="module" src="main.js"></script>
+</body>
+</html>

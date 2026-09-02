@@ -1,5 +1,5 @@
 // Importamos la clase base
-import Publicacion from './Publicacion.js';
+import Publicacion from './publicacion.js';
 
 // Usamos 'extends' para indicar la relación "es un" con Publicacion
 export default class PublicacionServicio extends Publicacion {

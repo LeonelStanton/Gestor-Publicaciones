@@ -18,4 +18,7 @@ export default class Publicacion {
     estaActiva() {
         return this.activa;
     }
+    darDeBaja() {
+    this.activa = false; // Modifica el estado interno de forma segura
+}
 }
