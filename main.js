@@ -1,8 +1,8 @@
 // main.js
-import Usuario from './Usuario.js';
-import PublicacionVenta from './PublicacionVenta.js';
-import PublicacionServicio from './PublicacionServicio.js';
-import RepositorioPublicaciones from './repositoriopublicaciones.js';
+import Usuario from './usuario.js';
+import PublicacionVenta from './publicacionventa.js';
+import PublicacionServicio from './public/js/publicacionservicio.js';
+import RepositorioPublicaciones from './public/repositoriopublicaciones.js';
 
 // 1. Inicializamos el repositorio
 const repo = new RepositorioPublicaciones();
