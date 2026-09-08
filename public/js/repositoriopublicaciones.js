@@ -1,17 +1,15 @@
-// RepositorioPublicaciones.js
-import { EventEmitter } from "node:events"; // Importamos el emisor nativo de Node [8]
+// RepositorioPublicaciones.js// Importamos el emisor nativo de Node [8]
 
-export default class RepositorioPublicaciones extends EventEmitter { // Aplicamos herencia [8]
+export default class RepositorioPublicaciones { // Aplicamos herencia [8]
     constructor() {
-        super(); // ¡Regla de oro! Llamamos al constructor de la clase base antes de usar "this" [8]
+
         this.publicaciones = [];
     }
 
     agregar(publicacion) {
         this.publicaciones.push(publicacion);
         
-        // Emitimos el evento "publicacionAgregada" y le pasamos el objeto publicacion como dato [4, 9, 10]
-        this.emit("publicacionAgregada", publicacion);
+        
     }
 
     // Busca todas las publicaciones que pertenezcan a un autor por su nombre [1, 2]
@@ -37,4 +35,26 @@ export default class RepositorioPublicaciones extends EventEmitter { // Aplicamo
     listarResumenes() {
         return this.publicaciones.map(p => p.mostrarResumen());
     }
+
+     cargarDesde(datos) {
+    this.publicaciones = []; 
+
+    datos.forEach(obj => {
+      const autorObj = new Usuario(obj.autor.nombre, obj.autor.email); 
+      let inst;
+
+      if (obj.tipo === "venta" || obj.precio !== undefined) {
+        inst = new PublicacionVenta(obj.titulo, obj.descripcion, autorObj, obj.precio);
+        inst.stock = obj.stock || 1;
+      } else {
+        inst = new PublicacionServicio(obj.titulo, obj.descripcion, autorObj, obj.modalidad, obj.duracionMinutos);
+      }
+
+      if (obj.activa !== undefined) {
+        inst.activa = obj.activa;
+      }
+
+      this.agregar(inst);
+    });
+  }
 }

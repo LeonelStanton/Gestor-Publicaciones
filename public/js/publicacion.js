@@ -1,13 +1,10 @@
 // Definimos y exportamos por defecto la clase Publicacion
 export default class Publicacion {
-    // Declaramos un campo estático privado para llevar la cuenta global de IDs creados
-    static #contadorId = 0;
-    // El constructor recibe los 3 datos iniciales obligatorios
-    constructor(titulo, descripcion, autor) {
-        // Incrementamos el contador global y se lo asignamos a esta nueva instancia
-        // Incrementamos el contador global y se lo asignamos a esta nueva instancia
-        Publicacion.#contadorId++; // [5]
-        this.id = Publicacion.#contadorId; // Cada publicación tendrá su ID exclusivo (1, 2, 3...)
+    // Generador de ID autoincremental estático
+  static idIncr = 0;
+
+  constructor(titulo, descripcion, autor) {
+    this.id = ++Publicacion.idIncr; // Genera un ID único para cada objeto // Cada publicación tendrá su ID exclusivo (1, 2, 3...)
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.autor = autor; // Por ahora, este autor es un string con el nombre
@@ -43,4 +40,10 @@ reactivar() {
     estaDestacado() {
         return this.destacado; // Método de consulta útil para la vista [9]
     }
+
+    resumen() {
+  // Retorna una síntesis de una línea con el autor, título y estado de actividad
+  const estado = this.estaActiva() ? "Activa" : "Inactiva";
+  return `${this.autor.nombre} — "${this.titulo}" [${estado}]`; [3]
+}
 }
