@@ -11,8 +11,23 @@ export default class Publicacion {
         this.fechaPublicacion = new Date(); // Se inicializa automáticamente con la fecha y hora actual
         this.activa = true;
         this.destacado = false; // Toda publicación nueva arranca activa por defecto
+        this.etiquetas = []; // Colección de etiquetas [4]
     }
 
+    agregarEtiqueta(etiqueta) {
+    const normalizada = etiqueta.trim();
+    if (!normalizada) {
+      throw new Error("Etiqueta inválida"); // [4]
+    }
+    if (!this.tieneEtiqueta(normalizada)) {
+      this.etiquetas.push(normalizada); // Evita duplicados [4]
+    }
+  }
+
+  tieneEtiqueta(etiqueta) {
+    const buscada = etiqueta.trim().toLowerCase();
+    return this.etiquetas.some(e => e.toLowerCase() === buscada); // [4]
+  }
     // Método para obtener una vista rápida de la publicación
     mostrarResumen() {
         return `${this.titulo} - ${this.autor.nombre}`;

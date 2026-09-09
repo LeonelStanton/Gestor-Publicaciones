@@ -6,10 +6,15 @@ export default class RepositorioPublicaciones { // Aplicamos herencia [8]
         this.publicaciones = [];
     }
 
+buscarPorEtiqueta(etiqueta) {
+  return this.publicaciones.filter(publicacion =>
+    publicacion.activa && publicacion.tieneEtiqueta(etiqueta)
+  ); // Excluye inactivas y devuelve coincidencias [5, 6]
+}
+
+
     agregar(publicacion) {
         this.publicaciones.push(publicacion);
-        
-        
     }
 
     // Busca todas las publicaciones que pertenezcan a un autor por su nombre [1, 2]
