@@ -62,4 +62,10 @@ buscarPorEtiqueta(etiqueta) {
       this.agregar(inst);
     });
   }
+
+  pendientesDeRevision() {
+  return this.publicaciones.filter(publicacion =>
+    publicacion.activa && publicacion.requiereRevision()
+  ); // Excluye inactivas y devuelve solo las que requieren revisión [1]
+}
 }

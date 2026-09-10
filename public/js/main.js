@@ -1,8 +1,11 @@
 // main.js - Práctica 8 (Completo hasta la Parte 7)
-import Usuario from './usuario.js';
-import PublicacionVenta from './publicacionventa.js';
-import PublicacionServicio from './publicacionservicio.js';
-import RepositorioPublicaciones from './repositoriopublicaciones.js';
+import Usuario from '/src/Usuario.js';
+import Publicacion from '/src/Publicacion.js';
+import PublicacionVenta from '/src/PublicacionVenta.js';
+import PublicacionServicio from '/src/PublicacionServicio.js';
+import RepositorioPublicaciones from '/src/RepositorioPublicaciones.js';
+import { Reporte } from "/src/Reporte.js";
+
 
 // === 1. COLECCIÓN EN MEMORIA PARA LAS INSTANCIAS DEL DOMINIO ===
 const repositorio = new RepositorioPublicaciones(); // Instancia del repositorio de publicaciones
@@ -436,3 +439,27 @@ tipo.addEventListener("change", actualizarEstadoFormulario);
 
 // 3. Inicializamos el botón como deshabilitado al cargar la página
 actualizarEstadoFormulario();
+
+console.log("\n=== 🧪 PRUEBA DE PARTE 2: Moderación en Publicación ===");
+const pub = new Publicacion("Carlos", "Vendo Apuntes", "Completos de Redes");
+
+console.log("¿Requiere revisión al inicio?:", pub.requiereRevision()); // false [2]
+
+// 1. Primer reporte válido
+pub.reportar("Ana", "Contenido inapropiado");
+console.log("Cantidad de reportes acumulados:", pub.reportes.length); // 1
+
+// 2. Intento de reporte duplicado con la misma usuaria (debe fallar)
+try {
+  pub.reportar("Ana", "Spam repetido");
+} catch (error) {
+  console.log("✅ Capturado error por duplicado:", error.message); // "El usuario ya reportó esta publicación" [2]
+}
+
+// 3. Dos reportes más de usuarios distintos
+pub.reportar("Luis", "Spam");
+pub.reportar("Pedro", "Información falsa");
+
+console.log("Cantidad de reportes acumulados:", pub.reportes.length); // 3
+console.log("¿Requiere revisión con 3 reportes?:", pub.requiereRevision()); // true [2]
+

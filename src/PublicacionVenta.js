@@ -1,5 +1,5 @@
 // Importamos la clase base que creamos en la Práctica 1
-import Publicacion from './publicacion.js';
+import Publicacion from './Publicacion.js';
 
 // Usamos 'extends' para indicar que PublicacionVenta hereda de Publicacion
 export default class PublicacionVenta extends Publicacion {

@@ -1,12 +1,15 @@
+// server.js
 import express from "express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const app = express();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Servir de forma estática los archivos que están en la carpeta 'public'
-app.use(express.static("public"));
+// Servimos public para el HTML/CSS y JS cliente
+app.use(express.static(path.join(__dirname, "public")));
 
-// Escuchar en el puerto 3000 como lo pide la materia
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Gestor de publicaciones disponible en http://localhost:${PORT}`);
-});
+// 🚀 AGREGÁ ESTA LÍNEA: Publicamos también la carpeta src/
+app.use("/src", express.static(path.join(__dirname, "src")));
+
+app.listen(3000, () => console.log("Servidor corriendo en http://localhost:3000"));
